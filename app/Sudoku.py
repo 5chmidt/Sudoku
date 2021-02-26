@@ -77,6 +77,7 @@ class Sudoku():
         for cell in cells:
           if(i in cell.Options):
             cell.Options = [i]
+            cell.Value = i
             return True
     return False
 
@@ -150,6 +151,13 @@ class Sudoku():
         line.append(" "+str(cell.value)+" ")
     print(",".join(line))
 
+  def PrintCellOptions(self, cells):
+    for cell in cells:
+      if (cell.Solved):
+        print("Row:", cell.RowIndex, "Column:", cell.ColumnIndex, "Value:", cell.Value)
+      else:
+        print("Row:", cell.RowIndex, "Column:", cell.ColumnIndex, "Options:", cell.Options)
+
 
   def CheckPuzzle(self, solution):
     i = 0
@@ -173,6 +181,7 @@ def main():
     s.ApplySolvedCells()
     s.RecalculateOptions()
     s.RunMerge()
+    s.RecalculateOptions()
     solved = s.CellsSolved
     if(solved == lastSolved):
       break
@@ -184,10 +193,6 @@ def main():
     ## print final solution ##
     print("interation", counter, "solved:", solved)
     s.PrintCellValues(s.cells)
-
-  print("Box 2")
-  s.PrintCellValues(s.BoxCells(2))
-  #s.CheckPuzzle(Puzzle().Solution2)
 
 if __name__ == '__main__':
   main()
