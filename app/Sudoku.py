@@ -158,7 +158,6 @@ class Sudoku():
       else:
         print("Row:", cell.RowIndex, "Column:", cell.ColumnIndex, "Options:", cell.Options)
 
-
   def CheckPuzzle(self, solution):
     i = 0
     for row in range(self.Size[0]):
