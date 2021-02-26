@@ -1,4 +1,4 @@
-import math
+from SudokuCell import SudokuCell as Cell
 from Puzzle import Puzzle
 
 class Sudoku():
@@ -48,7 +48,7 @@ class Sudoku():
     for row in puzzel:
       y = 0
       for item in row:
-        cell = Cell(self, x, y, item)
+        cell = Cell(x, y, item)
         self.Cells.append(cell)
         y += 1
       x += 1
@@ -150,7 +150,7 @@ class Sudoku():
         line.append(" "+str(cell.value)+" ")
     print(",".join(line))
 
-'''
+
   def CheckPuzzle(self, solution):
     i = 0
     for row in range(self.Size[0]):
@@ -158,57 +158,7 @@ class Sudoku():
         assert(solution[row][col] == self.cells[i], "Error in row:"+str(row)+" col:"+str(col))
         i += 1
     print("Solution has passed!")
-'''
-
-class Cell():
-  def __init__(self, sudoku, row, col, value):
-    self.sudoku = sudoku
-    self.row = row
-    self.col = col
-    self.value = value
-
-  @property 
-  def RowIndex(self):
-    return self.row
-
-  @property
-  def ColumnIndex(self):
-    return self.col
-
-  sudoku = Sudoku()
-  @property
-  def Sudoku(self):
-    return self.sudoku
-  
-  options = []
-  @property
-  def Options(self, value = None):
-    if(value):
-      self.options = value
-    return self.options
-
-  @Options.setter
-  def Options(self, value):
-    if (value):
-      self.options = value
-
-  @property
-  def Solved(self):
-    return self.Value > 0
-
-  @property
-  def Value(self):
-    return self.value
-
-  @Value.setter
-  def Value(self, value):
-    self.value = value
-
-  @property
-  def BoxIndex(self):
-    return (math.floor(self.row / 3) * 3) + math.floor(self.col / 3)
-
-
+    return True
 
 def main():
   s = Sudoku()
@@ -235,6 +185,7 @@ def main():
     print("interation", counter, "solved:", solved)
     s.PrintCellValues(s.cells)
 
+  print("Box 2")
   s.PrintCellValues(s.BoxCells(2))
   #s.CheckPuzzle(Puzzle().Solution2)
 
