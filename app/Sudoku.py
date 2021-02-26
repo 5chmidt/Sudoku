@@ -161,8 +161,8 @@ class Sudoku():
 '''
 
 class Cell():
-  def __init__(self, Sudoku, row, col, value):
-    self.Sudoku = Sudoku
+  def __init__(self, sudoku, row, col, value):
+    self.sudoku = sudoku
     self.row = row
     self.col = col
     self.value = value
@@ -175,10 +175,10 @@ class Cell():
   def ColumnIndex(self):
     return self.col
 
-  Sudoku = Sudoku()
+  sudoku = Sudoku()
   @property
   def Sudoku(self):
-    return self.Sudoku
+    return self.sudoku
   
   options = []
   @property
@@ -207,8 +207,6 @@ class Cell():
   @property
   def BoxIndex(self):
     return (math.floor(self.row / 3) * 3) + math.floor(self.col / 3)
-
-
 
 
 
