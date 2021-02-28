@@ -75,7 +75,7 @@ class Sudoku():
     return options
 
   def MergeOptions(self, cells):
-    options = MergeCellOptions(cells)   
+    options = self.MergeCellOptions(cells)   
     for i in range(1, self.Size[0]+1):
       # check if there is only one valid location #
       if(options.count(i) == 1):
@@ -199,7 +199,7 @@ class Sudoku():
 
 def main():
   s = Sudoku()
-  s.SetupPuzzle(Puzzle().Puzzle4)
+  s.SetupPuzzle(Puzzle().Puzzle3)
   print("--initial setup--")
   s.PrintCellValues(s.Cells)
   s.RecalculateOptions()
