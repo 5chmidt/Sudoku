@@ -57,15 +57,21 @@ class Sudoku():
     self.rowCount = x
     self.colCount = y
 
-  def RecalculateOptions(self):
+  ''' 
+  Initialize cell.Options values, by eliminating all solved numbers sharing a row, column or box.
+  '''
+  def DefaultPuzzleOptions(self):
     for cell in self.Cells:
       if (cell.Solved):
-        #print(cell.Value)
         continue
       if (not cell.Options):
-        cell.Options = self.ReduceOptions(cell)
+        cell.Options = self.DefaultCellOptions(cell)
 
-  def MergeCellOptions(self, cells):
+  '''
+  Create a single list of option values from a group of cells.
+  The list will have repeated values according to the number of cells each option appears in.
+  '''
+  def ListGroupOptions(self, cells):
     options = []
     for cell in cells:
       if(cell.Solved):
@@ -74,29 +80,37 @@ class Sudoku():
         options.append(opt)
     return options
 
-  def MergeOptions(self, cells):
-    options = self.MergeCellOptions(cells)   
+  '''
+  Check each group, if there is only one cell that is valid for a given option, set as the solved value.
+  '''
+  def MergeGroupOptions(self, cells):
+    options = self.ListGroupOptions(cells)   
     for i in range(1, self.Size[0]+1):
       # check if there is only one valid location #
       if(options.count(i) == 1):
         for cell in cells:
-          if(i in cell.Options):
+          if(i in cell.Options and not cell.Solved):
             cell.Options = [i]
             cell.Value = i
+            self.RemoveSolvedOptions(cell)
             return True
     return False
 
   def RunMerge(self):
     for i in range(self.Size[0]):
-        if(self.MergeOptions(self.RowCells(i))):
+        if(self.MergeGroupOptions(self.RowCells(i))):
           return True
-        if(self.MergeOptions(self.ColumnCells(i))):
+        if(self.MergeGroupOptions(self.ColumnCells(i))):
           return True
-        if(self.MergeOptions(self.BoxCells(i))):
+        if(self.MergeGroupOptions(self.BoxCells(i))):
           return True
     return False
 
-  def ReduceOptions(self, cell):
+  '''
+  Populate default options 1-9 for a grid cell.
+  Eliminate solved values from the list by row, column or box.
+  '''
+  def DefaultCellOptions(self, cell):
     options = list(range(1, self.Size[0] + 1))
     matching = [
       self.ColumnCells(cell.ColumnIndex),
@@ -112,22 +126,26 @@ class Sudoku():
         if (check.Value in options):
           options.remove(check.Value)
     
-    if (len(options) == 10):
-      print("Solved:", cell.RowIndex, cell.ColumnIndex, options)
-      print("Box")
-      self.PrintCellValues(self.BoxCells(cell.BoxIndex))
-      print("Column")
-      self.PrintCellValues(self.ColumnCells(cell.ColumnIndex))
-      print("Row")
-      self.PrintCellValues(self.BoxCells(cell.RowIndex))
-
-
     return options
+
+  def RemoveSolvedOptions(self, cell):
+    if(not cell.Solved):
+      return
+    
+    dataSet = [
+      self.RowCells(cell.RowIndex),
+      self.ColumnCells(cell.ColumnIndex),
+      self.BoxCells(cell.BoxIndex),
+    ]
+    for cells in dataSet:
+      for c in cells:
+        if (cell.Value in c.Options):
+          c.Options.remove(cell.Value)
 
   def BoxLineMerge(self, box, list):
     for i in range(self.Size[0]):
       cells = self.BoxCells(i)
-      options = self.MergeOptions(cells)
+      options = self.ListGroupOptions(cells)
 
       for opt in Helper.DistinctList(options):
         row = []
@@ -162,8 +180,10 @@ class Sudoku():
     
     return False
 
+  def PrintCellValues(self, cells, heading = ""):
+    if (heading):
+      print(heading)
 
-  def PrintCellValues(self, cells):
     line = []
     row = 0
     for cell in cells:
@@ -200,17 +220,20 @@ class Sudoku():
 def main():
   s = Sudoku()
   s.SetupPuzzle(Puzzle().Puzzle3)
-  print("--initial setup--")
-  s.PrintCellValues(s.Cells)
+  s.PrintCellValues(s.Cells, "--initial setup--")
   counter = 0
   lastSolved = 0
   while (counter < s.Size[0]*s.Size[1]):
     counter += 1
-    s.RecalculateOptions()
-    s.RunMerge()
-    s.RecalculateOptions()
+    s.DefaultPuzzleOptions()
+    i = 0
+    while (s.RunMerge() and i < s.Size[0]*s.Size[1]):
+      print("merge", i)
+      i += 1
+    
     solved = s.CellsSolved
     if(solved == lastSolved):
+      print("solved", solved)
       break
     else:
       lastSolved = solved
