@@ -202,7 +202,6 @@ def main():
   s.SetupPuzzle(Puzzle().Puzzle3)
   print("--initial setup--")
   s.PrintCellValues(s.Cells)
-  s.RecalculateOptions()
   counter = 0
   lastSolved = 0
   while (counter < s.Size[0]*s.Size[1]):
