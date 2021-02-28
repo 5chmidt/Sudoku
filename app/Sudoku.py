@@ -63,9 +63,12 @@ class Sudoku():
   def DefaultPuzzleOptions(self):
     for cell in self.Cells:
       if (cell.Solved):
+        print("Solved:", cell.Value, cell.Options)
         continue
       if (not cell.Options):
         cell.Options = self.DefaultCellOptions(cell)
+        if(cell.Options == 1):
+          self.RemoveSolvedOptions(cell)
 
   '''
   Create a single list of option values from a group of cells.
@@ -223,25 +226,22 @@ def main():
   s.PrintCellValues(s.Cells, "--initial setup--")
   counter = 0
   lastSolved = 0
+  s.DefaultPuzzleOptions()
   while (counter < s.Size[0]*s.Size[1]):
     counter += 1
-    s.DefaultPuzzleOptions()
-    i = 0
-    while (s.RunMerge() and i < s.Size[0]*s.Size[1]):
-      print("merge", i)
-      i += 1
+    
+    while s.RunMerge():
+      print("Removed Option")
     
     solved = s.CellsSolved
-    if(solved == lastSolved):
-      print("solved", solved)
+    if (solved == lastSolved):
       break
     else:
       lastSolved = solved
 
-
-    ## print final solution ##
-    print("interation", counter, "solved:", solved)
-    s.PrintCellValues(s.cells)
+  ## print final solution ##
+  print("interation", counter, "solved:", solved)
+  s.PrintCellValues(s.cells)
 
 if __name__ == '__main__':
   main()
