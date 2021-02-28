@@ -57,3 +57,18 @@ class Puzzle():
     puzzle.append([2,0,0, 0,4,0, 0,0,0])
     puzzle.append([0,0,7, 0,0,0, 0,0,0])
     return puzzle
+
+  ## NYT Hard
+  @property
+  def Puzzle4(self):
+    puzzle=[]
+    puzzle.append([0,7,4, 0,2,0, 0,0,0])
+    puzzle.append([0,0,0, 9,6,0, 7,0,0])
+    puzzle.append([3,8,0, 0,0,0, 0,2,0])
+    puzzle.append([0,9,0, 0,0,0, 0,0,5])
+    puzzle.append([2,0,0, 1,4,0, 0,6,0])
+    puzzle.append([0,0,1, 0,0,0, 0,0,0])
+    puzzle.append([0,0,0, 7,0,4, 0,1,0])
+    puzzle.append([0,0,5, 8,0,0, 0,0,0])
+    puzzle.append([0,0,0, 0,0,6, 4,3,0])
+    return puzzle
