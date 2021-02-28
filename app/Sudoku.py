@@ -1,5 +1,6 @@
 from SudokuCell import SudokuCell as Cell
 from Puzzle import Puzzle
+import Helper
 
 class Sudoku():
   rowCount = 0
@@ -61,16 +62,20 @@ class Sudoku():
       if (cell.Solved):
         #print(cell.Value)
         continue
-      cell.Options = self.ReduceOptions(cell)
-      
-  def MergeOptions(self, cells):
+      if (not cell.Options):
+        cell.Options = self.ReduceOptions(cell)
+
+  def MergeCellOptions(self, cells):
     options = []
     for cell in cells:
       if(cell.Solved):
         continue
       for opt in cell.Options:
         options.append(opt)
-    
+    return options
+
+  def MergeOptions(self, cells):
+    options = MergeCellOptions(cells)   
     for i in range(1, self.Size[0]+1):
       # check if there is only one valid location #
       if(options.count(i) == 1):
@@ -119,19 +124,46 @@ class Sudoku():
 
     return options
 
-  def ApplySolvedCells(self):
-    solved = 0
-    for cell in self.Cells:
-      if (cell.Solved):
-        continue
+  def BoxLineMerge(self, box, list):
+    for i in range(self.Size[0]):
+      cells = self.BoxCells(i)
+      options = self.MergeOptions(cells)
 
-      if(len(cell.Options) == 1):
-        cell.Value = cell.Options[0]
-        solved += 1
-    return solved
+      for opt in Helper.DistinctList(options):
+        row = []
+        col = []
+        for cell in cells:
+          if(opt in cell.Options):
+            row.append(opt.RowIndex)
+            col.append(opt.ColumnIndex)
+        
+        found = False
+        ## eliminate conflicting rows ##
+        if (len(row) > 1 and row.count(opt) == 1):
+          for c in self.RowCells(row[0]):
+            if (c.BoxIndex == i or c.Solved):
+              continue
 
-  def BoxOverlap(self, box, list):
-    return
+            if (opt in c.Options):
+              c.Options.remove(opt)
+              found = True
+        
+        if(len(col) > 1 and col.count(opt) == 1):
+          for c in self.ColumnCells(col[0]):
+            if (c.BoxIndex == i or c.Solved):
+              continue
+
+            if (opt in c.Options):
+              c.Options.remove(opt)
+              found = True
+        
+        if(found):
+          return found
+    
+    return False
+
+    
+
 
   def PrintCellValues(self, cells):
     line = []
@@ -169,7 +201,7 @@ class Sudoku():
 
 def main():
   s = Sudoku()
-  s.SetupPuzzle(Puzzle().Puzzle3)
+  s.SetupPuzzle(Puzzle().Puzzle4)
   print("--initial setup--")
   s.PrintCellValues(s.Cells)
   s.RecalculateOptions()
@@ -177,7 +209,6 @@ def main():
   lastSolved = 0
   while (counter < s.Size[0]*s.Size[1]):
     counter += 1
-    s.ApplySolvedCells()
     s.RecalculateOptions()
     s.RunMerge()
     s.RecalculateOptions()
@@ -186,8 +217,8 @@ def main():
       break
     else:
       lastSolved = solved
-    print("interation:", counter, "solved:", solved)
-    s.PrintCellValues(s.cells)
+
+
 
     ## print final solution ##
     print("interation", counter, "solved:", solved)

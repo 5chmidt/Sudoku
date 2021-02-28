@@ -28,10 +28,13 @@ class SudokuCell():
 
   @property
   def Solved(self):
-    return self.Value > 0
+    return self.Value > 0 or len(self.Options) == 1
 
   @property
   def Value(self):
+    if (not self.value and len(self.Options) == 1):
+        self.value = self.Options[0]
+        
     return self.value
 
   @Value.setter
