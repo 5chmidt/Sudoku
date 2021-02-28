@@ -162,8 +162,6 @@ class Sudoku():
     
     return False
 
-    
-
 
   def PrintCellValues(self, cells):
     line = []
@@ -217,7 +215,6 @@ def main():
       break
     else:
       lastSolved = solved
-
 
 
     ## print final solution ##
