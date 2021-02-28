@@ -28,6 +28,8 @@ class SudokuCell():
 
   @property
   def Solved(self):
+    if (len(self.Options) == 1):
+        self.Value = self.Options[0]
     return self.Value > 0
 
   @property
